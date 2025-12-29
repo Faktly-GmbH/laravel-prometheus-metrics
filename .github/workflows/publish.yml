@@ -1,0 +1,119 @@
+name: Publish Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php: [8.2, 8.3, 8.4]
+        laravel: [11, 12]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv
+
+      - name: Install dependencies
+        run: |
+          composer require "laravel/framework:^${{ matrix.laravel }}.0" --dev --no-interaction --prefer-dist
+          composer install --prefer-dist --no-interaction
+
+      - name: Run tests
+        run: vendor/bin/phpunit
+
+  publish:
+    name: Publish to Packagist
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Extract version
+        id: version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "release_version=${VERSION#v}" >> $GITHUB_OUTPUT
+
+      - name: Validate version tag
+        run: |
+          if [[ ! "${{ steps.version.outputs.version }}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+ ]]; then
+            echo "Invalid version tag format. Expected vX.Y.Z"
+            exit 1
+          fi
+
+      - name: Extract changelog for version
+        id: changelog
+        run: |
+          VERSION="${{ steps.version.outputs.release_version }}"
+          
+          if grep -q "## \[$VERSION\]" CHANGELOG.md; then
+            CHANGELOG=$(awk "/## \[$VERSION\]/,/## \[/{if(/## \[/ && !/## \[$VERSION\]/) exit; print}" CHANGELOG.md | sed '$d')
+            echo "changelog<<EOF" >> $GITHUB_OUTPUT
+            echo "$CHANGELOG" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          else
+            echo "changelog=Release $VERSION" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          name: Release ${{ steps.version.outputs.version }}
+          body: ${{ steps.changelog.outputs.changelog }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Notify Packagist
+        run: |
+          curl -X POST \
+            -d "token=${{ secrets.PACKAGIST_TOKEN }}" \
+            "https://packagist.org/api/update-package?username=$(echo $GITHUB_REPOSITORY | cut -d'/' -f1)&name=$(echo $GITHUB_REPOSITORY | cut -d'/' -f2)" \
+            --silent --show-error
+          
+          sleep 5
+          echo "Packagist notified successfully"
+
+      - name: Verify on Packagist
+        run: |
+          echo "Release ${{ steps.version.outputs.version }} published!"
+          echo "Package available at: https://packagist.org/packages/$(echo $GITHUB_REPOSITORY | tr '/' '/')"
+          echo "Install with: composer require $(echo $GITHUB_REPOSITORY | tr '/' '/' | tr '[:upper:]' '[:lower:]')"
+
+  notify:
+    name: Send Notification
+    needs: publish
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Extract version
+        id: version
+        run: echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Publish notification
+        run: |
+          echo "✅ Release ${{ steps.version.outputs.version }} published to Packagist!"
+          echo ""
+          echo "📦 Package: $(echo $GITHUB_REPOSITORY | tr '/' '/')"
+          echo "🔗 URL: https://packagist.org/packages/$(echo $GITHUB_REPOSITORY | tr '/' '/' | tr '[:upper:]' '[:lower:]')"
+          echo "📥 Install: composer require $(echo $GITHUB_REPOSITORY | tr '/' '/' | tr '[:upper:]' '[:lower:]')"
