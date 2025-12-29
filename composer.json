@@ -60,5 +60,6 @@
         "allow-plugins": {
             "php-http/discovery": true
         }
-    }
+    },
+    "version": "0.0.1"
 }
