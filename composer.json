@@ -1,64 +1,65 @@
 {
-  "name": "faktly/laravel-prometheus-metrics",
-  "description": "Comprehensive Prometheus metrics exporter for Laravel with optional support for Event Sourcing, Horizon, Meilisearch, Spatie Permission, and more.",
-  "type": "library",
-  "license": "MIT",
-  "scripts": {
-    "test": "vendor/bin/phpunit tests --display-skipped",
-    "test:coverage": "XDEBUG_MODE=coverage vendor/bin/phpunit --display-skipped --coverage-html=coverage",
-    "lint": "pint --preset psr12",
-    "lint:check": "pint --preset psr12 --test",
-    "psalm": "psalm",
-    "psalm:show-info": "psalm --show-info=false",
-    "changelog": "conventional-changelog",
-    "release": "conventional-changelog --commit",
-    "release:patch": "conventional-changelog --patch --commit",
-    "release:minor": "conventional-changelog --minor --commit",
-    "release:major": "conventional-changelog --major --commit"
-  },
-  "require": {
-    "php": "^8",
-    "illuminate/support": "^11 || ^12 || ^13"
-  },
-  "require-dev": {
-    "orchestra/testbench": "^8.0 || ^9.0",
-    "laravel/pint": "^1.13",
-    "phpunit/phpunit": "^10.5",
-    "vimeo/psalm": "^6.5",
-    "spatie/laravel-event-sourcing": "^7.12",
-    "laravel/horizon": "^5.41",
-    "meilisearch/meilisearch-php": "^1.16",
-    "spatie/laravel-permission": "^6.24",
-    "marcocesarato/php-conventional-changelog": "^1.17"
-  },
-  "suggest": {
-    "spatie/laravel-event-sourcing": "For Event Sourcing metrics",
-    "laravel/horizon": "For queue metrics via Horizon",
-    "meilisearch/meilisearch-php": "For Meilisearch metrics",
-    "spatie/laravel-permission": "For permission and role metrics"
-  },
-  "autoload": {
-    "psr-4": {
-      "Faktly\\LaravelPrometheusMetrics\\": "src/"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "Faktly\\LaravelPrometheusMetrics\\Tests\\": "tests/"
-    }
-  },
-  "extra": {
-    "laravel": {
-      "providers": [
-        "Faktly\\LaravelPrometheusMetrics\\LaravelPrometheusMetricsServiceProvider"
-      ]
-    }
-  },
-  "minimum-stability": "dev",
-  "prefer-stable": true,
-  "config": {
-    "allow-plugins": {
-      "php-http/discovery": true
-    }
-  }
+    "name": "faktly/laravel-prometheus-metrics",
+    "description": "Comprehensive Prometheus metrics exporter for Laravel with optional support for Event Sourcing, Horizon, Meilisearch, Spatie Permission, and more.",
+    "type": "library",
+    "license": "MIT",
+    "scripts": {
+        "test": "vendor/bin/phpunit tests --display-skipped",
+        "test:coverage": "XDEBUG_MODE=coverage vendor/bin/phpunit --display-skipped --coverage-html=coverage",
+        "lint": "pint --preset psr12",
+        "lint:check": "pint --preset psr12 --test",
+        "psalm": "psalm",
+        "psalm:show-info": "psalm --show-info=false",
+        "changelog": "conventional-changelog",
+        "release": "conventional-changelog --commit",
+        "release:patch": "conventional-changelog --patch --commit",
+        "release:minor": "conventional-changelog --minor --commit",
+        "release:major": "conventional-changelog --major --commit"
+    },
+    "require": {
+        "php": "^8",
+        "illuminate/support": "^11 || ^12 || ^13"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^8.0 || ^9.0",
+        "laravel/pint": "^1.13",
+        "phpunit/phpunit": "^10.5",
+        "vimeo/psalm": "^6.5",
+        "spatie/laravel-event-sourcing": "^7.12",
+        "laravel/horizon": "^5.41",
+        "meilisearch/meilisearch-php": "^1.16",
+        "spatie/laravel-permission": "^6.24",
+        "marcocesarato/php-conventional-changelog": "^1.17"
+    },
+    "suggest": {
+        "spatie/laravel-event-sourcing": "For Event Sourcing metrics",
+        "laravel/horizon": "For queue metrics via Horizon",
+        "meilisearch/meilisearch-php": "For Meilisearch metrics",
+        "spatie/laravel-permission": "For permission and role metrics"
+    },
+    "autoload": {
+        "psr-4": {
+            "Faktly\\LaravelPrometheusMetrics\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Faktly\\LaravelPrometheusMetrics\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Faktly\\LaravelPrometheusMetrics\\LaravelPrometheusMetricsServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    },
+    "version": "0.0.1"
 }
