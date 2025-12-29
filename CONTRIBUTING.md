@@ -177,7 +177,7 @@ composer psalm              # Static analysis
 ## Pull Request Process
 
 1. Update README.md with new features or options
-2. Update CHANGELOG.md under "Unreleased" section
+2. Update CHANGELOG.md under "Unreleased" section. Ensure version is not being added to composer.json
 3. Ensure all tests pass: `composer test`
 4. Ensure code style passes: `composer lint:check`
 5. Ensure static analysis passes: `composer psalm`

@@ -31,6 +31,7 @@ A comprehensive metrics exporter for Laravel that provides application insights 
 
 ```bash
 composer require faktly/laravel-prometheus-metrics
+php artisan vendor:publish --provider="Faktly\LaravelPrometheusMetrics\LaravelPrometheusMetricsServiceProvider"
 ```
 
 ### Configure

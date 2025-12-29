@@ -25,7 +25,7 @@ return [
         /**
          * Could be one of: json, yaml or prometheus.
          */
-        'format' => env('PROMETHEUS_METRICS_OUTPUT_FORMAT', 'json'),
+        'format' => env('PROMETHEUS_METRICS_OUTPUT_FORMAT', 'prometheus'),
     ],
 
     'prometheus' => [

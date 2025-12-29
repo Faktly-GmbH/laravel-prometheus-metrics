@@ -62,7 +62,7 @@ class HTTPCollector extends BaseCollector
         return count($counts) > 0 ? $counts : [];
     }
 
-    private function formatHistogram(array $histograms, array $buckets = null): array
+    private function formatHistogram(array $histograms, ?array $buckets = null): array
     {
         if (empty($histograms)) {
             return [];
@@ -82,7 +82,7 @@ class HTTPCollector extends BaseCollector
         return $result;
     }
 
-    private function buildHistogramBuckets(array $values, array $buckets = null): array
+    private function buildHistogramBuckets(array $values, ?array $buckets = null): array
     {
         if (empty($values)) {
             return [];
