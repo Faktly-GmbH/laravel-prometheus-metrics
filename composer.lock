@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2d5c22f4920fc35c9659e332041d0682",
+    "content-hash": "3bb933dc0721e654ad9735868fc4bc94",
     "packages": [
         {
             "name": "brick/math",
@@ -8217,16 +8217,16 @@
         },
         {
             "name": "orchestra/sidekick",
-            "version": "v1.2.18",
+            "version": "v1.2.19",
             "source": {
                 "type": "git",
                 "url": "https://github.com/orchestral/sidekick.git",
-                "reference": "0e080ef62eed6c45aaea3619566a1fce02b62094"
+                "reference": "79e87f3f56df1fb78f62397bc405a6af8d784263"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/orchestral/sidekick/zipball/0e080ef62eed6c45aaea3619566a1fce02b62094",
-                "reference": "0e080ef62eed6c45aaea3619566a1fce02b62094",
+                "url": "https://api.github.com/repos/orchestral/sidekick/zipball/79e87f3f56df1fb78f62397bc405a6af8d784263",
+                "reference": "79e87f3f56df1fb78f62397bc405a6af8d784263",
                 "shasum": ""
             },
             "require": {
@@ -8249,6 +8249,7 @@
             "autoload": {
                 "files": [
                     "src/Eloquent/functions.php",
+                    "src/Filesystem/functions.php",
                     "src/Http/functions.php",
                     "src/functions.php"
                 ],
@@ -8269,9 +8270,9 @@
             "description": "Packages Toolkit Utilities and Helpers for Laravel",
             "support": {
                 "issues": "https://github.com/orchestral/sidekick/issues",
-                "source": "https://github.com/orchestral/sidekick/tree/v1.2.18"
+                "source": "https://github.com/orchestral/sidekick/tree/v1.2.19"
             },
-            "time": "2025-11-29T15:16:23+00:00"
+            "time": "2025-12-30T04:11:10+00:00"
         },
         {
             "name": "orchestra/testbench",
