@@ -48,8 +48,8 @@ class SessionCollector extends BaseCollector
                 'redis' => $this->getRedisSessionCount(),
                 'memcached' => $this->getMemcachedSessionCount(),
                 'file' => $this->getFileSessionCount(),
-                // Drivers that cannot be enumerated centrally.
-                'array', 'cookie' => 0,
+                'cookie' => $this->getPrometheusUserSessionCount(),
+                // Drivers that cannot be enumerated centrally like "array":
                 default => 0,
             };
         } catch (Throwable $e) {
@@ -147,6 +147,20 @@ class SessionCollector extends BaseCollector
         } catch (Throwable $e) {
             $this->handleException('getFileSessionCount', $e);
 
+            return 0;
+        }
+    }
+
+    private function getPrometheusUserSessionCount(): int
+    {
+        try {
+            // Sessions within last 30 minutes.
+            return DB::table('prometheus_metrics_user_sessions')
+                     ->where('last_activity_at', '>=', now()->subMinutes(30))
+                     ->distinct('user_id')
+                     ->count('user_id');
+        } catch (Throwable $e) {
+            $this->handleException('getPrometheusSessionCount', $e);
             return 0;
         }
     }

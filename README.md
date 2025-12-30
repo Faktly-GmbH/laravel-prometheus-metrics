@@ -34,17 +34,67 @@ composer require faktly/laravel-prometheus-metrics
 php artisan vendor:publish --provider="Faktly\LaravelPrometheusMetrics\LaravelPrometheusMetricsServiceProvider"
 ```
 
+#### Count user session with prometheus_metrics_user_sessions table
+
+In some cases, you might use array/cookie session driver. Those session can not be counted. Therefore the metrics would 
+be messing. Therefore, we provide a database table and middleware, which still counts the user sessions – no matter 
+which driver is being used.
+
+If you use UUID/ULID, you might want to adjust the published database migration before you apply them.  
+
 ### Configure
 
 ```env
 PROMETHEUS_METRICS_TOKEN=your-secret-token-here
 ```
 
+#### Configure Prometheus scrape config
+
+You want your locally installed prometheus instance to scrape the laravel metrics. This can be accomplished by adding
+the following **scrape_config** to `/etc/prometheus/prometheus.yml`:
+
+```
+    - job_name: "laravel"
+      scheme: https
+      metrics_path: /internal/metrics
+      http_headers:
+        X-Metrics-Token:
+          values: ["YOUR_TOKEN"]
+      static_configs:
+        - targets: ["YOUR_HOST:443"]
+```
+
+Exchange **YOUR_TOKEN** with a secure token. You can create one with ``openssl rand -hex 64`` and **YOUR_HOST** could be
+a local **IP:PORT** combination or your website **HOST:PORT**.
+
 ### Access Metrics
 
 ```bash
 curl -H "X-Metrics-Token: your-secret-token-here" \
   http://localhost/internal/metrics
+```
+
+#### Register Middleware for HTTP metrics
+
+In some cases – especially legacy apps or with custom Middleware setup – you might want to register the required 
+middleware for HTTP metrics as soon as possible but after Session middleware. Add this to your Kernel.php or in newer 
+Laravel versions to bootstrap/app.php:
+
+```php
+->withMiddleware(function (Middleware $middleware) {
+    // Global HTTP Middleware - runs for every request
+    $middleware->use([
+        \Faktly\LaravelPrometheusMetrics\Http\Middleware\RecordHttpMetricsMiddleware::class,
+        \Faktly\LaravelPrometheusMetrics\Http\Middleware\TrackPrometheusUserSession::class,
+    ]);
+     // Middleware Priority
+    $middleware->priority([
+        \Illuminate\Cookie\Middleware\EncryptCookies::class,
+        \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+        \Illuminate\Session\Middleware\StartSession::class,
+        \Faktly\LaravelPrometheusMetrics\Http\Middleware\RecordHttpMetricsMiddleware::class,
+        \Faktly\LaravelPrometheusMetrics\Http\Middleware\TrackPrometheusUserSession::class,
+    ]);
 ```
 
 ### Test Locally

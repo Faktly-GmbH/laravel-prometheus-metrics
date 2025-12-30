@@ -2,9 +2,11 @@
 
 namespace Faktly\LaravelPrometheusMetrics;
 
+use Faktly\LaravelPrometheusMetrics\Console\Commands\CleanupPrometheusUserSessionsCommand;
 use Faktly\LaravelPrometheusMetrics\Console\Commands\TestMetricsCommand;
 use Faktly\LaravelPrometheusMetrics\Contracts\Mail\MetricsStore;
 use Faktly\LaravelPrometheusMetrics\Http\Middleware\RecordHttpMetricsMiddleware;
+use Faktly\LaravelPrometheusMetrics\Http\Middleware\TrackPrometheusUserSession;
 use Faktly\LaravelPrometheusMetrics\Metrics\Cache\CacheMetricsStore as CacheMetricsStore;
 use Faktly\LaravelPrometheusMetrics\Metrics\Mail\CacheMetricsStore as MailMetricsStore;
 use Faktly\LaravelPrometheusMetrics\Metrics\Mail\MetricsSubscriber as MailMetricsSubscriber;
@@ -54,13 +56,18 @@ class LaravelPrometheusMetricsServiceProvider extends ServiceProvider
     {
         $this->publishes([
             __DIR__ . '/../config/prometheus-metrics.php' => config_path('prometheus-metrics.php'),
-        ], 'config');
+        ], 'prometheus-metrics-config');
+
+        $this->publishes([
+            __DIR__.'/../database/migrations/' => database_path('migrations'),
+        ], 'prometheus-metrics-migrations');
 
         $this->loadRoutesFrom(__DIR__ . '/../routes/api.php');
 
         if ($this->app->runningInConsole()) {
             $this->commands([
                 TestMetricsCommand::class,
+                CleanupPrometheusUserSessionsCommand::class,
             ]);
         }
 
@@ -70,8 +77,11 @@ class LaravelPrometheusMetricsServiceProvider extends ServiceProvider
 
         if (config('prometheus-metrics.collectors.config.http.enabled', true)) {
             $this->app['router']->aliasMiddleware('record-http-metrics', RecordHttpMetricsMiddleware::class);
+            $this->app['router']->aliasMiddleware('track-user-sessions', TrackPrometheusUserSession::class);
             $this->app['router']->pushMiddlewareToGroup('web', RecordHttpMetricsMiddleware::class);
             $this->app['router']->pushMiddlewareToGroup('api', RecordHttpMetricsMiddleware::class);
+            $this->app['router']->pushMiddlewareToGroup('web', TrackPrometheusUserSession::class);
+            $this->app['router']->pushMiddlewareToGroup('api', TrackPrometheusUserSession::class);
         }
     }
 }

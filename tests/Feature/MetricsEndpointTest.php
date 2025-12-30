@@ -34,6 +34,7 @@ class MetricsEndpointTest extends TestCase
     {
         config()->set('prometheus-metrics.auth.enabled', true);
         config()->set('prometheus-metrics.auth.token', 'secret-token');
+        config()->set('prometheus-metrics.output.format', 'json');
 
         $response = $this->getJson('/internal/metrics', [
             'X-Metrics-Token' => 'secret-token',
@@ -127,6 +128,7 @@ class MetricsEndpointTest extends TestCase
         config()->set('prometheus-metrics.auth.enabled', true);
         config()->set('prometheus-metrics.auth.token', 'secret-token');
         config()->set('prometheus-metrics.collectors.config.http.enabled', false);
+        config()->set('prometheus-metrics.output.format', 'json');
 
         $response = $this->getJson('/internal/metrics', [
             'X-Metrics-Token' => 'secret-token',
@@ -146,14 +148,15 @@ class MetricsEndpointTest extends TestCase
     public function test_http_metrics_endpoint_returns_data(): void
     {
         config()->set('prometheus-metrics.auth.enabled', false);
+        config()->set('prometheus-metrics.output.format', 'json');
 
         $response = $this->get('/');
-        $this->assertTrue($response->status() < 500);
+        $this->assertTrue($response->getStatusCode() < 500);
 
         $response = $this->getJson('/internal/metrics');
 
-        if ($response->status() === 500) {
-            dump('Status: ' . $response->status());
+        if ($response->getStatusCode() === 500) {
+            dump('Status: ' . $response->getStatusCode());
             dump('Response: ' . $response->content());
             dump('JSON: ', $response->json());
         }
