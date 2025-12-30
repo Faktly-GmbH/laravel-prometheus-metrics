@@ -17,7 +17,7 @@
         "release:major": "conventional-changelog --major --commit"
     },
     "require": {
-        "php": "^8",
+        "php": "^8.4 || ^8.5",
         "illuminate/support": "^11 || ^12 || ^13"
     },
     "require-dev": {
@@ -60,6 +60,5 @@
         "allow-plugins": {
             "php-http/discovery": true
         }
-    },
-    "version": "0.0.2"
+    }
 }
