@@ -59,6 +59,14 @@
     "config": {
         "allow-plugins": {
             "php-http/discovery": true
+        },
+        "audit": {
+            "ignore": {
+                "PKSA-8qx3-n5y5-vvnd": {
+                    "apply": "block",
+                    "reason": "CI needs Laravel 12 matrix; track advisory and remove ignore when fixed."
+                }
+            }
         }
     }
 }

@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        php: [8.2, 8.3, 8.4]
+        php: [8.4, 8.5]
         laravel: [11, 12]
 
     steps:
@@ -27,8 +27,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          composer require "laravel/framework:^${{ matrix.laravel }}.0" --dev --no-interaction --prefer-dist
-          composer install --prefer-dist --no-interaction
+          composer require "laravel/framework:^${{ matrix.laravel }}.0" --dev --no-interaction --prefer-dist -W
+          composer update --no-interaction --prefer-dist -W
 
       - name: Run tests
         run: vendor/bin/phpunit
