@@ -23,7 +23,7 @@
     "require-dev": {
         "orchestra/testbench": "^8.0 || ^9.0 || ^10.0",
         "laravel/pint": "^1.13",
-        "phpunit/phpunit": "^10.5",
+        "phpunit/phpunit": "^10.5 || ^11.5 || ^12.0",
         "vimeo/psalm": "^6.5",
         "spatie/laravel-event-sourcing": "^7.12",
         "laravel/horizon": "^5.41",
