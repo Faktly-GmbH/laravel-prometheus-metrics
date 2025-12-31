@@ -46,7 +46,6 @@ jobs:
             composer require "laravel/framework:^11.0" "orchestra/testbench:^9.0" --dev --no-interaction --no-update
             composer update laravel/framework orchestra/testbench --prefer-dist --no-interaction -W
           fi
-          composer install --prefer-dist --no-interaction
 
       - name: Run PHPUnit tests
         run: vendor/bin/phpunit --coverage-clover=coverage.xml
