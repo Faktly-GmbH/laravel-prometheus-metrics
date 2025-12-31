@@ -44,7 +44,7 @@ Event Sourcing, Permissions, Horizon, Meilisearch.
 
 🔒 **Secure by default**: Token-protected endpoint.
 
-📦 **Modern stack**: Laravel 11+, PHP 8.2+.
+📦 **Modern stack**: Laravel 11+, PHP 8.4+.
 
 📊 **JSON export**: Prometheus-friendly, Grafana-friendly, also easy to consume 
 for custom tooling.
