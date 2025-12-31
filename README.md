@@ -1,29 +1,55 @@
 # Laravel Prometheus Metrics
 
-[![Tests](https://github.com/faktly/laravel-prometheus-metrics/workflows/Tests/badge.svg)](https://github.com/faktly/laravel-prometheus-metrics/actions?query=workflow:Tests)
-[![Publish Release](https://github.com/faktly/laravel-prometheus-metrics/workflows/Publish%20Release/badge.svg)](https://github.com/faktly/laravel-prometheus-metrics/releases)
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/faktly/laravel-prometheus-metrics.svg?style=flat-square)](https://packagist.org/packages/faktly/laravel-prometheus-metrics)
+[![Tests](https://github.com/Faktly-GmbH/laravel-prometheus-metrics/workflows/Tests/badge.svg)](https://github.com/Faktly-GmbH/laravel-prometheus-metrics/actions?query=workflow:Tests)
+[![Publish Release](https://github.com/Faktly-GmbH/laravel-prometheus-metrics/workflows/Publish%20Release/badge.svg)](https://github.com/Faktly-GmbH/laravel-prometheus-metrics/releases)
+![PHP requirement](https://img.shields.io/packagist/dependency-v/faktly/laravel-prometheus-metrics/php)
 [![License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
+[![Contributors](https://img.shields.io/github/contributors/Faktly-GmbH/laravel-prometheus-metrics)](https://github.com/Faktly-GmbH/laravel-prometheus-metrics/graphs/contributors)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/faktly/laravel-prometheus-metrics.svg?style=flat-square)](https://packagist.org/packages/faktly/laravel-prometheus-metrics)
+[![Downloads](https://img.shields.io/packagist/dt/faktly/laravel-prometheus-metrics)](https://packagist.org/packages/faktly/laravel-prometheus-metrics)
 
-A comprehensive metrics exporter for Laravel that provides application insights via JSON for Prometheus, Grafana, and external monitoring tools. Collects 10+ different metrics from your Laravel application with zero configuration needed.
+---
 
-## Features
+**Stop guessing. Start measuring.** Expose production-grade Laravel metrics as JSON/YAML/Prometheus so Prometheus, Grafana, and any monitoring stack can tell you what is really happening inside your app.
 
-✨ **10+ Metric Collectors** - Database, Sessions, Queue, Mail, Cache, Users, Event Sourcing, Permissions, Horizon, Meilisearch
+If you have ever asked, “Why is the API slow?” or “Are queue jobs backing up?” or “Did deploy X increase errors?”, this package helps you answer in minutes, not hours.
 
-🔌 **Fully Optional** - Each collector can be disabled independently
+<p align="center">
+  <img src="assets/screenshots/example-dashboard.png" alt="Example Grafana dashboard based on Faktly Laravel Prometheus metrics" width="900">
+</p>
 
-🚀 **High Performance** - Built-in caching with configurable TTL
+---
 
-🔒 **Secure** - Token-based authentication with hash-equals comparison
+## Why this exists
 
-📦 **Framework Compatible** - Laravel 11+, PHP 8.2+
+Most Laravel apps only become “observable” after something breaks.
 
-🛠️ **Configurable** - 30+ configuration options via environment variables
+This exporter gives you fast visibility into the stuff that actually moves the needle:
+- Performance bottlenecks.
+- Queue pressure.
+- Cache behavior.
+- Error patterns.
+- Auth and session activity.
 
-📊 **JSON Export** - Ready for Prometheus/Grafana or custom exporters
+---
 
-🧪 **Well Tested** - 30+ test methods covering all collectors
+## What you get
+
+✨ **10+ Metric Collectors**: Database, Sessions, Queue, Mail, Cache, Users, 
+Event Sourcing, Permissions, Horizon, Meilisearch.
+
+🔌 **Fully optional**: Enable what you need, disable what you do not.
+
+🚀 **High performance**: Built-in caching with configurable TTL.
+
+🔒 **Secure by default**: Token-protected endpoint.
+
+📦 **Modern stack**: Laravel 11+, PHP 8.2+.
+
+📊 **JSON export**: Prometheus-friendly, Grafana-friendly, also easy to consume 
+for custom tooling.
+
+---
 
 ## Quick Start
 
@@ -36,11 +62,14 @@ php artisan vendor:publish --provider="Faktly\LaravelPrometheusMetrics\LaravelPr
 
 #### Count user session with prometheus_metrics_user_sessions table
 
-In some cases, you might use array/cookie session driver. Those session can not be counted. Therefore the metrics would 
-be messing. Therefore, we provide a database table and middleware, which still counts the user sessions – no matter 
-which driver is being used.
+If you use non-database session drivers, “active sessions” can be hard to 
+measure reliably.
 
-If you use UUID/ULID, you might want to adjust the published database migration before you apply them.  
+This package includes a database table plus middleware, so you can still count 
+user sessions regardless of your session driver.
+
+If you use UUID or ULID primary keys, adjust the published migration before 
+applying it.
 
 ### Configure
 
@@ -50,24 +79,25 @@ PROMETHEUS_METRICS_TOKEN=your-secret-token-here
 
 #### Configure Prometheus scrape config
 
-You want your locally installed prometheus instance to scrape the laravel metrics. This can be accomplished by adding
-the following **scrape_config** to `/etc/prometheus/prometheus.yml`:
+Add this to `/etc/prometheus/prometheus.yml` :
 
 ```
-    - job_name: "laravel"
-      scheme: https
-      metrics_path: /internal/metrics
-      http_headers:
-        X-Metrics-Token:
-          values: ["YOUR_TOKEN"]
-      static_configs:
-        - targets: ["YOUR_HOST:443"]
+- job_name: "laravel"
+  scheme: https
+  metrics_path: /internal/metrics
+  http_headers:
+    X-Metrics-Token:
+      values: ["YOUR_TOKEN"]
+  static_configs:
+    - targets: ["YOUR_HOST:443"]
 ```
 
-Exchange **YOUR_TOKEN** with a secure token. You can create one with ``openssl rand -hex 64`` and **YOUR_HOST** could be
+Replace YOUR_TOKEN and YOUR_HOST.
+
+You can create a safe token with ``openssl rand -hex 64`` and **YOUR_HOST** could be
 a local **IP:PORT** combination or your website **HOST:PORT**.
 
-### Access Metrics
+### Verify it works
 
 ```bash
 curl -H "X-Metrics-Token: your-secret-token-here" \
@@ -76,9 +106,10 @@ curl -H "X-Metrics-Token: your-secret-token-here" \
 
 #### Register Middleware for HTTP metrics
 
-In some cases – especially legacy apps or with custom Middleware setup – you might want to register the required 
-middleware for HTTP metrics as soon as possible but after Session middleware. Add this to your Kernel.php or in newer 
-Laravel versions to bootstrap/app.php:
+In legacy apps or custom middleware setups, register the HTTP metrics middleware
+early (but after session start).
+
+Add this to Kernel.php, or in newer Laravel versions bootstrap/app.php:
 
 ```php
 ->withMiddleware(function (Middleware $middleware) {
