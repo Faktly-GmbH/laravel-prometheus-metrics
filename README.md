@@ -134,6 +134,11 @@ Add this to Kernel.php, or in newer Laravel versions bootstrap/app.php:
 php artisan prometheus:test-metrics
 ```
 
+## PHPUnit / pest
+
+During tests you might want to disable the extension. Simply add
+``<env name="PROMETHEUS_METRICS_ENABLED" value="false"/>`` to your phpunit.xml file.
+
 ## What Gets Measured
 
 | Collector          | Metrics                            | Optional | Requires         |
