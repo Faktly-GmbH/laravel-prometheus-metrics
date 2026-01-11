@@ -26,6 +26,10 @@ class LaravelPrometheusMetricsServiceProvider extends ServiceProvider
             'prometheus-metrics'
         );
 
+        if (!config('prometheus-metrics.enabled')) {
+            return;
+        }
+
         $this->app->singleton(MetricsAggregator::class, function (Container $container) {
             return new MetricsAggregator($container);
         });
@@ -63,6 +67,10 @@ class LaravelPrometheusMetricsServiceProvider extends ServiceProvider
         ], 'prometheus-metrics-migrations');
 
         $this->loadRoutesFrom(__DIR__ . '/../routes/api.php');
+
+        if (!config('prometheus-metrics.enabled')) {
+            return;
+        }
 
         if ($this->app->runningInConsole()) {
             $this->commands([
